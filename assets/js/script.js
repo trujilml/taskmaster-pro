@@ -33,7 +33,7 @@ var loadTasks = function() {
 
   // loop over object properties
   $.each(tasks, function(list, arr) {
-    // console.log(list, arr);
+    console.log(list, arr);
     // then loop over sub-array
     arr.forEach(function(task) {
       createTask(task.text, task.date, list);
@@ -186,31 +186,33 @@ $(".card .list-group").sortable({
   scroll: false,
   tolerance: "pointer",
   helper: "clone",
-  activate: function(event) {
-    console.log("activate", this);
+  activate: function(event, ui) {
+    console.log(ui);
   },
-  deactivate: function(event) {
-    console.log("deactivate", this);
+  deactivate: function(event, ui) {
+    console.log(ui);
   },
   over: function(event) {
-    console.log("over", event.target);
+    console.log(event);
   },
   out: function(event) {
-    console.log("out", event.target);
+    console.log(event);
   },
-  update: function(event) {
+  update: function() {
     var tempArr = [];
 
     $(this).children().each(function() {
-      var text = $(this)
+      tempArr.push({
+      text: $(this)
       .find("p")
       .text()
-      .trim();
-
-      var date = $(this)
+      .trim(),
+      date: $(this)
       .find("span")
       .text()
-      .trim();
+      .trim()
+    });
+  });
 
       var arrName = $(this)
       .attr("id")
@@ -218,27 +220,23 @@ $(".card .list-group").sortable({
 
       tasks[arrName] = tempArr;
       saveTasks();
-
-      tempArr.push({
-        text: text,
-        date: date
-      });
-    });
-  }
+      },  
+      stop: function(event) {
+        $(this).removeClass("dropover");
+      }
 });
 
 $("#trash").droppable({
   accept: ".card .list-group-item",
   tolerance: "touch",
   drop: function(event, ui) {
-    console.log("drop");
     ui.draggable.remove();
   },
   over: function(event, ui){
-    console.log("over");
+    console.log(ui);
   },
   out: function(event, ui){
-    console.log("out");
+    console.log(ui);
   }
 });
 
